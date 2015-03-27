@@ -1,5 +1,6 @@
 var tm = require('text-miner');
 var Dictionary = require('../models/Dictionary');
+var stem = require('czech-stemmer');
 
 var dict = [];
 exports.analyzeNegativeness = function(items, field, callback) {
@@ -22,8 +23,11 @@ function getMatchingRate(corpus) {
 	var terms = new tm.Terms(corpus);
 	var termsCount = terms.vocabulary.length;
 	var matchCount = 0;
+  console.log(dict);
 	for (var j = 0; j < termsCount; j++) {
-		if (dict.indexOf(terms.vocabulary[j]) > -1) {
+    console.log(stem(terms.vocabulary[j]));
+    console.log(dict.indexOf(stem(terms.vocabulary[j])));
+		if (dict.indexOf(stem(terms.vocabulary[j])) > -1) {
 			matchCount++;
 		}
 	}

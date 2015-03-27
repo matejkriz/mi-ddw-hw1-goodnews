@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "czech-stemmer": "^0.1.0",
     "express": "3.4.4",
     "feedparser": "^1.0.0",
     "jade": "*",
