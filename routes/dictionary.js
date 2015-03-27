@@ -15,7 +15,6 @@ exports.addVocabulary = function(req, res) {
 
 exports.initDictionary = function(req, res) {
 	for (var i = 0; i < negativeWords.cs.length; i++) {
-    console.log(stem(negativeWords.cs[i]));
     saveToDatabase(stem(negativeWords.cs[i]), 'cs', function(err) {
   		if (err) return next(err);
   		res.send(201, 'Successfully added.');

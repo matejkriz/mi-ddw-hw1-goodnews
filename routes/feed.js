@@ -9,11 +9,11 @@ exports.fetch = function(req, res) {
   socket.req = req;
   socket.res = res;
   socket.posts = [];
-	socket.positiveness = req.query.positiveness ? req.query.positiveness : 1;
+  socket.positiveness = req.query.positiveness ? req.query.positiveness : 1;
 
-	if(!feed){
-		res.send(400, 'You must select feed!')
-	}
+  if (!feed) {
+    res.send(400, 'You must select feed!')
+  }
 
   // Define streams
   var feedRequest = request(feed, {
@@ -68,51 +68,59 @@ function done(err) {
 }
 
 function getNegativeCount(posts) {
-	var negativeCount = 0;
-	for (var i = 0; i < posts.length; i++) {
-		if(posts[i].negativeness > 0) {
-			negativeCount++;
-		}
-	}
-	return negativeCount;
+  var negativeCount = 0;
+  for (var i = 0; i < posts.length; i++) {
+    if (posts[i].negativeness > 0) {
+      negativeCount++;
+    }
+  }
+  return negativeCount;
 }
 
 function getIndexList(posts) {
-	var indexList = posts.map(function(post, position){
-		return {index: position, negativeness: post.negativeness};
-	});
-	// sort posts descendent by negativness
-	return indexList.sort(function(a, b){return b.negativeness - a.negativeness});
+  var indexList = posts.map(function(post, position) {
+    return {
+      index: position,
+      negativeness: post.negativeness
+    };
+  });
+  // sort posts descendent by negativness
+  return indexList.sort(function(a, b) {
+    return b.negativeness - a.negativeness
+  });
 }
 
-function removeMostNegative(posts, count, indexList){
-	for (var i = 0; i < count; i++) {
-		posts.splice(indexList[i].index, 1);
-	}
-	return posts;
+function removeMostNegative(posts, count, indexList) {
+  for (var i = 0; i < count; i++) {
+    for (var j = 0; j < posts.length; j++) {
+      if (posts[j].myindex === indexList[i].index) {
+        posts.splice(j, 1);
+      }
+    }
+  }
+  return posts;
 }
 
 
 // positiveness (between 0 and 1)- rate of completely positive posts to keep
 function filter(posts, positiveness) {
-	var totalCount = posts.length;
-	var negativeCount = getNegativeCount(posts);
-	var toFilterRate = (negativeCount / totalCount) * positiveness;
-	var toFilterCount = Math.round(toFilterRate * totalCount);
+  var totalCount = posts.length;
+  var negativeCount = getNegativeCount(posts);
+  var toFilterRate = (negativeCount / totalCount) * positiveness;
+  var toFilterCount = Math.round(toFilterRate * totalCount);
 
-	console.log("totalCount");
-	console.log(totalCount);
-	console.log("negativeCount");
-	console.log(negativeCount);
-	console.log("positiveness");
-	console.log(positiveness);
-	console.log("toFilterRate");
-	console.log(toFilterRate);
-	console.log("toFilterCount");
-	console.log(toFilterCount);
+  console.log("totalCount");
+  console.log(totalCount);
+  console.log("negativeCount");
+  console.log(negativeCount);
+  console.log("positiveness");
+  console.log(positiveness);
+  console.log("toFilterRate");
+  console.log(toFilterRate);
+  console.log("toFilterCount");
+  console.log(toFilterCount);
 
-	var filteredPosts = removeMostNegative(posts, toFilterCount, getIndexList(posts));
-	console.log("filteredPosts.length");
-	console.log(filteredPosts.length);
-	return filteredPosts;
+  var filteredPosts = removeMostNegative(posts, toFilterCount, getIndexList(
+    posts));
+  return filteredPosts;
 }
